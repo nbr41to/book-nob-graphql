@@ -20,6 +20,7 @@
 - [Zod](https://zod.dev/)
 - [React Hook Form](https://react-hook-form.com/)
 - [dayjs](https://day.js.org/)
+- [@next/font](https://nextjs.org/docs/api-reference/next/font)
 
 ## Installations
 
@@ -34,19 +35,25 @@ yarn add -D @storybook/test-runner @storybook/addon-a11y @storybook/testing-libr
 ```
 
 ```sh
-yarn add @apollo/client graphql @emotion/css zod react-hook-form dayjs
+yarn add @apollo/client graphql @emotion/css zod react-hook-form @hookform/resolvers dayjs @next/font
 ```
 
 ```sh
-yarn add -D @apollo/client graphql jest chromatic husky lint-staged msw
+yarn add -D graphql @apollo/client @graphql-codegen/cli @graphql-codegen/client-preset jest chromatic husky lint-staged msw
 ```
 
 ```sh
 yarn add --dev --exact prettier
 ```
 
+### mantine ui
+
+```sh
+yarn add @mantine/core @mantine/hooks @mantine/dates dayjs @mantine/notifications @mantine/modals @mantine/next @emotion/server @emotion/react
+```
+
 ### until
 
 ```sh
-yarn add --dev eslint-config-prettier
+yarn add --dev
 ```

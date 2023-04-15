@@ -1,0 +1,20 @@
+query GetBookConnections {
+  book_connection {
+    edges {
+      cursor
+      node {
+        author_id
+        created_at
+        description
+        id
+        title
+        updated_at
+        author {
+          name
+          id
+          email
+        }
+      }
+    }
+  }
+}

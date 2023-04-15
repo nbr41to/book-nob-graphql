@@ -1,6 +1,17 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import type { AppProps } from 'next/app';
+import { client } from '@/apollo/client';
+import { ApolloProvider } from '@apollo/client';
+import '@/styles/globals.css';
+import { Layout } from '@/components/layout/Layout';
+import { Notifications } from '@mantine/notifications';
 
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <ApolloProvider client={client}>
+      <Layout>
+        <Notifications position='top-center' />
+        <Component {...pageProps} />
+      </Layout>
+    </ApolloProvider>
+  );
 }
