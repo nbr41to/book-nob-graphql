@@ -24,19 +24,23 @@
 
 ## Installations
 
-### done
+### storybook
 
 ```sh
 npx storybook@latest init
 ```
 
 ```sh
-yarn add -D @storybook/test-runner @storybook/addon-a11y @storybook/testing-library @storybook/jest @storybook/addon-interactions @storybook/addon-coverage
+yarn add -D @storybook/test-runner @storybook/addon-a11y @storybook/testing-library @storybook/jest @storybook/addon-interactions @storybook/addon-coverage msw-storybook-addon
 ```
+
+### dependencies
 
 ```sh
 yarn add @apollo/client graphql @emotion/css zod react-hook-form @hookform/resolvers dayjs @next/font
 ```
+
+### devDependencies
 
 ```sh
 yarn add -D graphql @apollo/client @graphql-codegen/cli @graphql-codegen/client-preset jest chromatic husky lint-staged msw
@@ -50,10 +54,4 @@ yarn add --dev --exact prettier
 
 ```sh
 yarn add @mantine/core @mantine/hooks @mantine/dates dayjs @mantine/notifications @mantine/modals @mantine/next @emotion/server @emotion/react
-```
-
-### until
-
-```sh
-yarn add --dev
 ```

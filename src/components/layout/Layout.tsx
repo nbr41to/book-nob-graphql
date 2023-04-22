@@ -18,6 +18,7 @@ export const Layout: FC<Props> = ({ children }) => {
   return (
     <AppShell
       className={mPlusRounded1c.variable}
+      zIndex={10}
       padding='md'
       navbar={
         <Navbar width={{ base: 200 }} p='xs'>
