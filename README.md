@@ -43,7 +43,7 @@ yarn add @apollo/client graphql @emotion/css zod react-hook-form @hookform/resol
 ### devDependencies
 
 ```sh
-yarn add -D graphql @apollo/client @graphql-codegen/cli @graphql-codegen/client-preset jest chromatic husky lint-staged msw
+yarn add -D graphql @apollo/client @graphql-codegen/cli @graphql-codegen/client-preset jest chromatic husky lint-staged msw jest-environment-jsdom
 ```
 
 ```sh
