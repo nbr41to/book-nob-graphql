@@ -3,6 +3,7 @@ import React from 'react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
+import { RecoilRoot } from 'recoil';
 import '@/styles/globals.css';
 
 initialize();
@@ -23,8 +24,11 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
+      /* TODO: MockedProviderを使用するとmswが挿入されなくなる */
       <ApolloProvider client={dummyApolloClient}>
-        <Story />
+        <RecoilRoot>
+          <Story />
+        </RecoilRoot>
       </ApolloProvider>
     ),
     mswDecorator,

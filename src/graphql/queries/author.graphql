@@ -38,3 +38,13 @@ mutation UpdateAuthor($id: uuid!, $name: String!, $email: String!) {
     }
   }
 }
+
+mutation DeleteAuthor($id: uuid!) {
+  delete_author(where: { id: { _eq: $id } }) {
+    returning {
+      id
+      name
+      email
+    }
+  }
+}

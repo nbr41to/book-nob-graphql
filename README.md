@@ -37,7 +37,7 @@ yarn add -D @storybook/test-runner @storybook/addon-a11y @storybook/testing-libr
 ### dependencies
 
 ```sh
-yarn add @apollo/client graphql @emotion/css zod react-hook-form @hookform/resolvers dayjs @next/font
+yarn add @apollo/client graphql @emotion/css zod react-hook-form @hookform/resolvers dayjs @next/font recoil
 ```
 
 ### devDependencies

@@ -2,24 +2,19 @@ import type { FC } from 'react';
 import { Button, InputBase, LoadingOverlay, Select } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { authorCreateSchema } from '@/validations/author';
 import { useGetAuthors } from '@/apollo/hooks/useGetAuthors';
 import { Book, CreateInputBook } from '@/types/book';
 import { createBookSchema } from '@/validations/book';
 import { decodeRelayUuid } from '@/utils/decodeRelayUuid';
+import { useCreateBook } from '@/apollo/hooks/useCreateBook';
 
 type Props = {
-  loading?: boolean;
-  onCreate: (params: CreateInputBook) => Promise<void>;
-  onCancel: () => void;
+  onClose: () => void;
 };
 
-export const CreateBookForm: FC<Props> = ({
-  loading = false,
-  onCreate,
-  onCancel,
-}) => {
+export const CreateBookForm: FC<Props> = ({ onClose }) => {
   const { data: authors } = useGetAuthors();
+  const { mutate: createBook, loading: createIsLoading } = useCreateBook();
 
   const {
     register,
@@ -36,9 +31,19 @@ export const CreateBookForm: FC<Props> = ({
     resolver: zodResolver(createBookSchema),
   });
 
-  const handleCreate = async (data: CreateInputBook) => {
-    await onCreate(data);
+  const handleOnClose = () => {
+    onClose();
     reset();
+  };
+
+  const handleCreate = async (data: CreateInputBook) => {
+    await createBook({
+      variables: {
+        ...data,
+        author_id: decodeRelayUuid(data.author_id),
+      },
+      onCompleted: handleOnClose,
+    });
   };
 
   return (
@@ -60,7 +65,7 @@ export const CreateBookForm: FC<Props> = ({
           <Select
             data={
               authors?.map(({ node: author }) => ({
-                value: decodeRelayUuid(author.id),
+                value: author.id,
                 label: author.name,
               })) || []
             }
@@ -76,14 +81,19 @@ export const CreateBookForm: FC<Props> = ({
       />
 
       <div className='mt-4 flex justify-center gap-4'>
-        <Button type='submit' variant='outline' disabled={loading}>
+        <Button type='submit' variant='outline' disabled={createIsLoading}>
           Submit
         </Button>
-        <Button type='submit' variant='outline' color='red' onClick={onCancel}>
+        <Button
+          type='submit'
+          variant='outline'
+          color='red'
+          onClick={handleOnClose}
+        >
           Cancel
         </Button>
       </div>
-      <LoadingOverlay visible={loading} />
+      <LoadingOverlay visible={createIsLoading} />
     </form>
   );
 };

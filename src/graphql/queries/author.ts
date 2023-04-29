@@ -46,3 +46,15 @@ export const UPDATE_AUTHOR = gql`
     }
   }
 `;
+
+export const DELETE_AUTHOR = gql`
+  mutation DeleteAuthor($id: uuid!) {
+    delete_author(where: { id: { _eq: $id } }) {
+      returning {
+        id
+        name
+        email
+      }
+    }
+  }
+`;

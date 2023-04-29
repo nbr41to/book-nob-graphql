@@ -3,29 +3,19 @@ import { Button, InputBase, LoadingOverlay, Select } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGetAuthors } from '@/apollo/hooks/useGetAuthors';
-import {
-  Book,
-  CreateInputBook,
-  UpdateBookMutationVariables,
-  UpdateInputBook,
-} from '@/types/book';
+import { UpdateInputBook } from '@/types/book';
 import { updateBookSchema } from '@/validations/book';
 import { decodeRelayUuid } from '@/utils/decodeRelayUuid';
+import { useUpdateBook } from '@/apollo/hooks/useUpdateBook';
 
 type Props = {
-  defaultValues: UpdateBookMutationVariables;
-  loading?: boolean;
-  onUpdate: (params: UpdateBookMutationVariables) => Promise<void>;
-  onCancel: () => void;
+  defaultValues: UpdateInputBook;
+  onClose: () => void;
 };
 
-export const UpdateBookForm: FC<Props> = ({
-  defaultValues,
-  loading = false,
-  onUpdate,
-  onCancel,
-}) => {
+export const UpdateBookForm: FC<Props> = ({ defaultValues, onClose }) => {
   const { data: authors } = useGetAuthors();
+  const { mutate: updateBook, loading: updateIsLoading } = useUpdateBook();
 
   const {
     register,
@@ -38,8 +28,14 @@ export const UpdateBookForm: FC<Props> = ({
     resolver: zodResolver(updateBookSchema),
   });
 
-  const handleUpdate = async (data: UpdateBookMutationVariables) => {
-    await onUpdate(data);
+  const handleUpdate = async (data: UpdateInputBook) => {
+    await updateBook({
+      variables: {
+        ...data,
+        id: decodeRelayUuid(data.id),
+      },
+      onCompleted: onClose,
+    });
     reset();
   };
 
@@ -78,14 +74,14 @@ export const UpdateBookForm: FC<Props> = ({
       />
 
       <div className='mt-4 flex justify-center gap-4'>
-        <Button type='submit' variant='outline' disabled={loading}>
+        <Button type='submit' variant='outline' disabled={updateIsLoading}>
           Submit
         </Button>
-        <Button type='submit' variant='outline' color='red' onClick={onCancel}>
+        <Button type='submit' variant='outline' color='red' onClick={onClose}>
           Cancel
         </Button>
       </div>
-      <LoadingOverlay visible={loading} />
+      <LoadingOverlay visible={updateIsLoading} />
     </form>
   );
 };

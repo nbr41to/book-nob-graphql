@@ -4,7 +4,9 @@ import {
   GET_AUTHOR_CONNECTIONS,
 } from '@/graphql/queries/author';
 
-const authorQueryHandler = graphql.query(
+const hasura = graphql.link('http://localhost:6006/graphql');
+
+const authorQueryHandler = hasura.query(
   GET_AUTHOR_CONNECTIONS,
   (req, res, ctx) => {
     return res(
@@ -14,18 +16,17 @@ const authorQueryHandler = graphql.query(
           edges: [
             {
               __typename: 'authorEdge',
-              cursor:
-                'eyJpZCIgOiAiNmU3MzQyNjgtYjAyNi00NThmLWI3MTctMTYwMjQ1MzE5ZDJjIn0=',
+              cursor: 'cursor-1',
               node: {
                 __typename: 'author',
-                email: 'nbr.41to@gmail.com',
-                id: 'WzEsICJwdWJsaWMiLCAiYXV0aG9yIiwgIjZlNzM0MjY4LWIwMjYtNDU4Zi1iNzE3LTE2MDI0NTMxOWQyYyJd',
+                email: 'example1@example.com',
+                id: 'author-uid-1',
                 name: 'testman',
                 books: [
                   {
                     __typename: 'book',
                     description: null,
-                    id: 'WzEsICJwdWJsaWMiLCAiYm9vayIsIDJd',
+                    id: 'book-uid-1',
                     title: '本だよ',
                   },
                 ],
@@ -33,24 +34,22 @@ const authorQueryHandler = graphql.query(
             },
             {
               __typename: 'authorEdge',
-              cursor:
-                'eyJpZCIgOiAiZWEzODM4MmMtMDFmOC00ZmVlLTkzOWUtOTVmOTk5ZTM5ZWRiIn0=',
+              cursor: 'cursor-2',
               node: {
                 __typename: 'author',
-                email: 'ado@ado.com',
-                id: 'WzEsICJwdWJsaWMiLCAiYXV0aG9yIiwgImVhMzgzODJjLTAxZjgtNGZlZS05MzllLTk1Zjk5OWUzOWVkYiJd',
-                name: '新しい',
+                email: 'example2@example.com',
+                id: 'author-uid-2',
+                name: '新しい人',
                 books: [],
               },
             },
             {
               __typename: 'authorEdge',
-              cursor:
-                'eyJpZCIgOiAiZTAxYmVlM2ItMTFhYi00Y2ZkLTgzY2UtZjcwNDU4OGM3MzRlIn0=',
+              cursor: 'cursor-3',
               node: {
                 __typename: 'author',
-                email: 'nbr@gmail.co',
-                id: 'WzEsICJwdWJsaWMiLCAiYXV0aG9yIiwgImUwMWJlZTNiLTExYWItNGNmZC04M2NlLWY3MDQ1ODhjNzM0ZSJd',
+                email: 'example3@example.com',
+                id: 'author-uid-3',
                 name: 'nob',
                 books: [],
               },
@@ -61,8 +60,23 @@ const authorQueryHandler = graphql.query(
     );
   },
 );
+
 const createAuthorHandler = graphql.mutation(CREATE_AUTHOR, (req, res, ctx) => {
-  return res(ctx.data({}));
+  console.log('req');
+  return res(
+    ctx.data({
+      insert_author: {
+        returning: [
+          {
+            __typename: 'author',
+            id: 'new-author-uid',
+            name: 'author-name',
+            email: 'example@example.com',
+          },
+        ],
+      },
+    }),
+  );
 });
 
 export const authorHandlers = [authorQueryHandler, createAuthorHandler];
