@@ -2,19 +2,30 @@ import type { FC } from 'react';
 import { Button, InputBase, LoadingOverlay, Select } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useGetAuthors } from '@/apollo/hooks/useGetAuthors';
-import { Book, CreateInputBook } from '@/types/book';
+import { CreateInputBook } from '@/types/book';
 import { createBookSchema } from '@/validations/book';
 import { decodeRelayUuid } from '@/utils/decodeRelayUuid';
-import { useCreateBook } from '@/apollo/hooks/useCreateBook';
+import { FragmentType, useFragment } from '@/gql';
+import {
+  AuthorOptionFragment,
+  CREATE_BOOK,
+} from '@/components/CreateBookForm/graphql';
+import { useMutation } from '@apollo/client';
 
 type Props = {
+  authors: FragmentType<typeof AuthorOptionFragment>[];
   onClose: () => void;
 };
 
-export const CreateBookForm: FC<Props> = ({ onClose }) => {
-  const { data: authors } = useGetAuthors();
-  const { mutate: createBook, loading: createIsLoading } = useCreateBook();
+export const CreateBookForm: FC<Props> = ({ authors, onClose }) => {
+  const authorsOptions = useFragment(AuthorOptionFragment, authors);
+
+  const [createBook, { loading: createIsLoading }] = useMutation(
+    CREATE_BOOK,
+    { refetchQueries: ['GetBookConnections'] },
+    // memo: このComponentでQueryは定義していないので、refetchQueriesには外部のQueryを指定することになるので,文字列で指定している
+    // しかし,上の層で定義していれば解決される問題である
+  );
 
   const {
     register,
@@ -64,9 +75,9 @@ export const CreateBookForm: FC<Props> = ({ onClose }) => {
         render={({ field }) => (
           <Select
             data={
-              authors?.map(({ node: author }) => ({
-                value: author.id,
-                label: author.name,
+              authorsOptions.map((option) => ({
+                value: option.id,
+                label: option.name,
               })) || []
             }
             searchable

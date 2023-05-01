@@ -1,13 +1,15 @@
-import { graphql } from 'msw';
+import { AuthorTableFragment } from '@/components/AuthorTable/graphql/AuthorTableFragment';
+import { AuthorOptionFragment } from '@/components/BookTable/graphql';
+import { makeFragmentData } from '@/gql';
 import {
-  CREATE_AUTHOR,
-  GET_AUTHOR_CONNECTIONS,
-} from '@/graphql/queries/author';
+  mockCreateAuthorMutation,
+  mockGetAuthorConnectionsQuery,
+  mockGetAuthorOptionsQuery,
+} from '@/gql/graphql';
 
-const hasura = graphql.link('http://localhost:6006/graphql');
-
-const authorQueryHandler = hasura.query(
-  GET_AUTHOR_CONNECTIONS,
+/* codegen pluginで生成したMSWのhandlerを使用 */
+// memo: 型安全だが,Fragmentを引用しているのでAPIのSnapshotを利用できるか心配
+const authorConnectionsHandler = mockGetAuthorConnectionsQuery(
   (req, res, ctx) => {
     return res(
       ctx.data({
@@ -17,42 +19,51 @@ const authorQueryHandler = hasura.query(
             {
               __typename: 'authorEdge',
               cursor: 'cursor-1',
-              node: {
-                __typename: 'author',
-                email: 'example1@example.com',
-                id: 'author-uid-1',
-                name: 'testman',
-                books: [
-                  {
-                    __typename: 'book',
-                    description: null,
-                    id: 'book-uid-1',
-                    title: '本だよ',
-                  },
-                ],
-              },
+              node: makeFragmentData(
+                {
+                  __typename: 'author',
+                  id: 'author-uid-1',
+                  name: 'testman',
+                  email: 'example1@example.com',
+                  books: [
+                    {
+                      __typename: 'book',
+                      id: 'book-uid-1',
+                      title: '本だよ',
+                      description: null,
+                    },
+                  ],
+                },
+                AuthorTableFragment,
+              ),
             },
             {
               __typename: 'authorEdge',
               cursor: 'cursor-2',
-              node: {
-                __typename: 'author',
-                email: 'example2@example.com',
-                id: 'author-uid-2',
-                name: '新しい人',
-                books: [],
-              },
+              node: makeFragmentData(
+                {
+                  __typename: 'author',
+                  id: 'author-uid-2',
+                  name: '新しい人',
+                  email: 'example2@example.com',
+                  books: [],
+                },
+                AuthorTableFragment,
+              ),
             },
             {
               __typename: 'authorEdge',
               cursor: 'cursor-3',
-              node: {
-                __typename: 'author',
-                email: 'example3@example.com',
-                id: 'author-uid-3',
-                name: 'nob',
-                books: [],
-              },
+              node: makeFragmentData(
+                {
+                  __typename: 'author',
+                  id: 'author-uid-3',
+                  email: 'example3@example.com',
+                  name: 'nob',
+                  books: [],
+                },
+                AuthorTableFragment,
+              ),
             },
           ],
         },
@@ -61,7 +72,7 @@ const authorQueryHandler = hasura.query(
   },
 );
 
-const createAuthorHandler = graphql.mutation(CREATE_AUTHOR, (req, res, ctx) => {
+const createAuthorHandler = mockCreateAuthorMutation((req, res, ctx) => {
   console.log('req');
   return res(
     ctx.data({
@@ -79,4 +90,56 @@ const createAuthorHandler = graphql.mutation(CREATE_AUTHOR, (req, res, ctx) => {
   );
 });
 
-export const authorHandlers = [authorQueryHandler, createAuthorHandler];
+const authorOptionsHandler = mockGetAuthorOptionsQuery((req, res, ctx) => {
+  return res(
+    ctx.data({
+      author_connection: {
+        __typename: 'authorConnection',
+        edges: [
+          {
+            __typename: 'authorEdge',
+            cursor: 'cursor-1',
+            node: makeFragmentData(
+              {
+                __typename: 'author',
+                id: 'author-uid-1',
+                name: 'testman',
+              },
+              AuthorOptionFragment,
+            ),
+          },
+          {
+            __typename: 'authorEdge',
+            cursor: 'cursor-2',
+            node: makeFragmentData(
+              {
+                __typename: 'author',
+                id: 'author-uid-2',
+                name: '新しい人',
+              },
+              AuthorOptionFragment,
+            ),
+          },
+          {
+            __typename: 'authorEdge',
+            cursor: 'cursor-3',
+            node: makeFragmentData(
+              {
+                __typename: 'author',
+                id: 'author-uid-3',
+                name: 'nob',
+              },
+              AuthorOptionFragment,
+            ),
+          },
+        ],
+      },
+    }),
+  );
+});
+
+export const authorHandlers = [
+  authorConnectionsHandler,
+  createAuthorHandler,
+  authorOptionsHandler,
+];

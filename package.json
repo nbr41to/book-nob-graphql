@@ -47,6 +47,8 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^3.3.1",
     "@graphql-codegen/client-preset": "^3.0.1",
+    "@graphql-codegen/near-operation-file-preset": "^2.5.0",
+    "@graphql-codegen/typescript-msw": "^1.1.6",
     "@storybook/addon-a11y": "^7.0.6",
     "@storybook/addon-coverage": "^0.0.8",
     "@storybook/addon-essentials": "^7.0.6",
@@ -59,6 +61,7 @@
     "@storybook/test-runner": "^0.10.0",
     "@storybook/testing-library": "^0.1.0",
     "chromatic": "^6.17.3",
+    "dotenv": "^16.0.3",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-storybook": "^0.6.11",
     "husky": "^8.0.3",

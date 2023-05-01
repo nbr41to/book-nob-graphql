@@ -55,3 +55,7 @@ yarn add --dev --exact prettier
 ```sh
 yarn add @mantine/core @mantine/hooks @mantine/dates dayjs @mantine/notifications @mantine/modals @mantine/next @emotion/server @emotion/react
 ```
+
+## References
+
+https://the-guild.dev/graphql/config/docs/user/usage

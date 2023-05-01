@@ -10,10 +10,36 @@ const config: CodegenConfig = {
       },
     },
   },
-  documents: ['src/graphql/**/*.graphql'],
+  documents: [
+    // 'src/graphql/**/*.ts',
+    'src/**/*.{tsx,ts}',
+    '!src/graphql/generated/**/*',
+  ],
   generates: {
     './src/gql/': {
       preset: 'client',
+      // presetConfig: {
+      //   extension: '.generated.ts',
+      //   baseTypesPath: '~~/gql/graphql',
+      // },
+      plugins: ['typescript-msw'],
+      config: {
+        link: {
+          name: 'msw',
+          endpoint: 'http://localhost:6006/graphql',
+        },
+      },
+    },
+    './src/': {
+      preset: 'near-operation-file',
+      presetConfig: {
+        extension: '.generated.ts',
+        baseTypesPath: '~@/gql/graphql',
+      },
+      plugins: ['typescript-msw'], // オペレーション定義からMSWのハンドラを生成するプラグイン
+      config: {
+        typesPrefix: 'Types.',
+      },
     },
   },
 };

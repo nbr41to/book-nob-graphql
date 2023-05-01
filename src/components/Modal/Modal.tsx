@@ -1,6 +1,4 @@
 import type { FC, ReactNode } from 'react';
-import { Skeleton, Table, UnstyledButton } from '@mantine/core';
-import { Author } from '@/gql/graphql';
 
 type Props = {
   open: boolean;

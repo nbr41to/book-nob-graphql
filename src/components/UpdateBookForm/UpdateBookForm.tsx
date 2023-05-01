@@ -2,20 +2,30 @@ import type { FC } from 'react';
 import { Button, InputBase, LoadingOverlay, Select } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useGetAuthors } from '@/apollo/hooks/useGetAuthors';
-import { UpdateInputBook } from '@/types/book';
 import { updateBookSchema } from '@/validations/book';
 import { decodeRelayUuid } from '@/utils/decodeRelayUuid';
-import { useUpdateBook } from '@/apollo/hooks/useUpdateBook';
+import { FragmentType, useFragment } from '@/gql';
+import { UpdateBookMutationVariables } from '@/gql/graphql';
+import { useMutation } from '@apollo/client';
+import {
+  UPDATE_BOOK,
+  AuthorOptionFragment,
+} from '@/components/UpdateBookForm/graphql';
 
 type Props = {
-  defaultValues: UpdateInputBook;
+  defaultValues: UpdateBookMutationVariables;
+  authors: FragmentType<typeof AuthorOptionFragment>[];
   onClose: () => void;
 };
 
-export const UpdateBookForm: FC<Props> = ({ defaultValues, onClose }) => {
-  const { data: authors } = useGetAuthors();
-  const { mutate: updateBook, loading: updateIsLoading } = useUpdateBook();
+export const UpdateBookForm: FC<Props> = ({
+  defaultValues,
+  authors,
+  onClose,
+}) => {
+  const authorOptions = useFragment(AuthorOptionFragment, authors);
+
+  const [updateBook, { loading: updateIsLoading }] = useMutation(UPDATE_BOOK);
 
   const {
     register,
@@ -23,17 +33,14 @@ export const UpdateBookForm: FC<Props> = ({ defaultValues, onClose }) => {
     control,
     reset,
     formState: { errors },
-  } = useForm<UpdateInputBook>({
+  } = useForm<UpdateBookMutationVariables>({
     defaultValues,
     resolver: zodResolver(updateBookSchema),
   });
 
-  const handleUpdate = async (data: UpdateInputBook) => {
+  const handleUpdate = async (params: UpdateBookMutationVariables) => {
     await updateBook({
-      variables: {
-        ...data,
-        id: decodeRelayUuid(data.id),
-      },
+      variables: params,
       onCompleted: onClose,
     });
     reset();
@@ -57,9 +64,9 @@ export const UpdateBookForm: FC<Props> = ({ defaultValues, onClose }) => {
         render={({ field }) => (
           <Select
             data={
-              authors?.map(({ node: author }) => ({
-                value: decodeRelayUuid(author.id),
-                label: author.name,
+              authorOptions.map((option) => ({
+                value: decodeRelayUuid(option.id),
+                label: option.name,
               })) || []
             }
             searchable
