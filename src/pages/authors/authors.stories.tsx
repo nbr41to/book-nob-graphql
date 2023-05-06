@@ -53,3 +53,38 @@ export const CreateAuthor: Story = {
     });
   },
 } satisfies Story;
+
+export const CreateError: Story = {
+  args: {},
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('Open create modal', async () => {
+      await userEvent.click(
+        canvas.getByRole('button', {
+          name: 'New author',
+        }),
+      );
+      await expect(canvas.getByText('Create new author')).toBeVisible();
+    });
+
+    await step('Input name and email', async () => {
+      await userEvent.type(canvas.getByLabelText('name'), '');
+      await userEvent.type(canvas.getByLabelText('email'), 'bad-email');
+    });
+
+    await step('Submit form', async () => {
+      await userEvent.click(
+        canvas.getByRole('button', {
+          name: 'Submit',
+        }),
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1));
+    });
+
+    await step('Check error', async () => {
+      await expect(canvas.getByText('Name is required')).toBeVisible();
+      await expect(canvas.getByText('Invalid email')).toBeVisible();
+    });
+  },
+} satisfies Story;

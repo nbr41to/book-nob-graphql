@@ -49,6 +49,7 @@
     "@graphql-codegen/client-preset": "^3.0.1",
     "@graphql-codegen/near-operation-file-preset": "^2.5.0",
     "@graphql-codegen/typescript-msw": "^1.1.6",
+    "@playwright/test": "^1.33.0",
     "@storybook/addon-a11y": "^7.0.6",
     "@storybook/addon-coverage": "^0.0.8",
     "@storybook/addon-essentials": "^7.0.6",

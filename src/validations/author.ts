@@ -10,7 +10,9 @@ export const authorUpdateSchema =
     z
       .object({
         id: z.string(),
-        name: z.string().min(1),
+        name: z.string().min(1, {
+          message: 'Name is required',
+        }),
         email: z.string().email(),
       })
       .strict(),
